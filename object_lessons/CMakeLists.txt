@@ -9,3 +9,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # add the executable
 add_executable(object_lesson01_c object_lesson01.cc)
 add_executable(object_lesson01 object_lesson01.cpp)
+add_executable(object_lesson02 object_lesson02.cpp)
