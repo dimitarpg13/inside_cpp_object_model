@@ -103,3 +103,15 @@ and runtime efficiency.
 
 <img src="images/object_lessons_pic3.png" width="587" height="324">
 
+Adding Inheritance
+
+C++ supports both _single_ inheritance:
+
+```
+class Library_materials { ... };
+class Book : public Library_materials { ... };
+class Rental_book : public Book { ... };
+```
+
+and _multiple_ inheritance:
+
