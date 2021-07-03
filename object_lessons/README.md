@@ -79,5 +79,7 @@ The Simple Object Model also relies on this two table model.
 
 The C++ Object Model
 
-
+Stroustrup's original (and still prevailing) C++ Object Model is derived from the simple object
+model by optimizing for space and access time. Nonstatic data members are allocated directly
+within each class object. 
 
