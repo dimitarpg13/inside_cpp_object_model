@@ -50,3 +50,23 @@ A Simple Object Model
 
 <img src="images/object_lessons_pic1.png" width="473" height="324">
 
+In this simple model, the members themselves are not placed within the object. Only pointers
+addressing the members are placed within the object. Doing this avoids problems from member's
+being quite different types and requiring different amounts (and sometimes different types of)
+storage. Members within an object are addressed by their slot's index. For example, ```_x```'s
+index is 6 and ```_point_count```'s index is 7. The general size of a class object is the size
+of a pointer multiplied by the number of members declared by the class. Although this model is 
+not used in practice, this simple concept of an index or slot number is the one that has been
+developed into the C++ pointer-to-member concept.
+
+A Table-Driven Object Model
+
+For an implementation to maintain a uniform representation for the objects of all classes, an
+alternative object model might factor out all member specific information, placing it in data
+member and member function pair of tables. The class object contains the pointers to the two
+member tables. The member function table is a sequence of slots with each slot addressing a
+member. The data member table directly holds the data. This is shown on the figure below.
+
+<img src="images/object_lessons_pic2.png" width="473" height="324">
+
+
