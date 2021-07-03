@@ -101,5 +101,5 @@ or modification of the nonstatic class data members. The two table data mode, fo
 flexibility by providing an additional level of indirection. But it does this at the cost of space
 and runtime efficiency.
 
-<img src="images/object_lessons_pic3.png" width="473" height="324">
+<img src="images/object_lessons_pic3.png" width="587" height="324">
 
