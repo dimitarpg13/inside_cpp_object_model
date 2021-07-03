@@ -81,5 +81,25 @@ The C++ Object Model
 
 Stroustrup's original (and still prevailing) C++ Object Model is derived from the simple object
 model by optimizing for space and access time. Nonstatic data members are allocated directly
-within each class object. 
+within each class object. Static data members are stoed outside the individual class object.
+Static and nonstatic function members are hoisted outside the class object. Virtual functions are
+supported in two steps:
+
+1. A table of pointers to virtual functions is generated for each class (this is called the virtual 
+table).
+
+2. A single pointer to the associated virtual table is inserted within each class object (traditionally
+this has been called the vptr). The setting, resetting, and not setting of the vptr is handled 
+automatically through code generated within each class constructor, destructor, and copy assignment
+operator. The type_info object associated with each class in support of runtime type identification (RTTI)
+is also addressed within the virtual table usually within the table's first slot.
+
+The figure below illustrates the general C++ object model for our Point class. The primary strength of 
+the C++ object model is its space and running efficiency. Its primary drawback is the need to recompile
+unmodified code that makes use of an object of a class for which there has been an addition, removal, 
+or modification of the nonstatic class data members. The two table data mode, for example, offers more
+flexibility by providing an additional level of indirection. But it does this at the cost of space
+and runtime efficiency.
+
+<img src="images/object_lessons_pic3.png" width="473" height="324">
 
