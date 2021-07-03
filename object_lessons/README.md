@@ -48,5 +48,5 @@ flavors of data and function members?
 
 A Simple Object Model
 
-![](images/object_lessons_pic1.png | width=100)
+<img src="images/object_lessons_pic1.png" width="473" height="324">
 
