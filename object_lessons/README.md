@@ -67,6 +67,17 @@ member and member function pair of tables. The class object contains the pointer
 member tables. The member function table is a sequence of slots with each slot addressing a
 member. The data member table directly holds the data. This is shown on the figure below.
 
+
+Member Table Object Model
+
 <img src="images/object_lessons_pic2.png" width="473" height="324">
+
+Although this model is not used in practice within C++, the concept of a member function table
+has been the traditional implementation supporting efficient runtime resolution of virtual 
+functions. At least one implementation of the CORBA ORB has used a form of this two table model.
+The Simple Object Model also relies on this two table model.
+
+The C++ Object Model
+
 
 
