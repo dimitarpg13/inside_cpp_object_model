@@ -43,4 +43,19 @@ protected:
 
 };
 ```
+how is the class Point to be represented within the machine? That is, how do we model the various 
+flavors of data and function members?
 
+A Simple Object Model
+
+
+``` 
+                        _____________________
+                       |                     |
+                 ----->| Point::Point(float) |
+                |      |_____________________|
+                |
+ ____________   |
+|         *--|--
+
+```
