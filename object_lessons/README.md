@@ -226,3 +226,19 @@ void foobar( X &_result )
     return; 
 }
 ```
+
+A Keyword Distinction
+
+Because C++ strives to maintain (as close as possible) language compatibility with C, C++
+is considerably more complicated than it would otherwise be. For example, overload function
+resolution would be a lot simpler if there were not eight flavors of integers to support.
+Similarly, if C++ were to throw off the C declaration syntax, lookahead would not be required
+to determine that the following is an invocation of ```pf``` rather than its definition:
+
+```cpp
+// don't know if declaration or invocation
+// until see the integer constant 1024
+int ( *pf ) ( 1024 );
+```
+
+
