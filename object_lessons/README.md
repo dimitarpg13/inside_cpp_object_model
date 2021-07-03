@@ -114,4 +114,62 @@ class Rental_book : public Book { ... };
 ```
 
 and _multiple_ inheritance:
+```
+// original pre-Standard iostream implementation
+class iostream:
+   public istream,
+   public ostream { ... };
+```
+
+Moreover, the inheritance may be specified as _virtual_ (that is, shared):
+
+```
+class istream : virtual public ios { ... };
+class ostream : virtual public ios { ... };
+```
+
+In the case of virtual inheritance, only a single occurence of the base class is 
+maintained (called a _subobject_) regardless of how many times the class is derived
+ from within the inheritance chain. iostream, for example, contains only a single
+instance of the virtual ios base class.
+
+How might a derived class internally model its base class instance? In a simple 
+base class object model, each base class might be assigned a slot within the 
+derived class object. Each slot holds the address of the base class subobject. 
+The primary drawback to this scheme is the space and access-time overhead of the 
+indirection. A benefit is that the size of the class object is unaffected by changes
+in the size of its associated base classes.
+
+Alternatively, one can imagine a base table model. Here, a base class table is 
+generated for which each slot contains the address of an associated base class,
+much as the virtual table holds the address of each virtual function. Each class
+object contains a _bptr_ initialized to address its base class table. The primary
+drawback to this strategy, of course, is both the space and access-time overhead of
+the indirection. One benefit is a uniform representation of inheritance within each
+class object. Each class object would contain a base table pointer at some fixed
+location regardless of the size or number of its base classes. A second benefit would
+be the ability to grow, shrink, or otherwise modify the base class table without 
+changing the size of the class object themselves.
+
+In both schemes, the degree of indirection increases with the depth of the inheritance
+chain; for example, a Rental_book requires two indirections to access an inherited 
+member of its Library_materials class, whereas Book requires only one. A uniform access
+time could be gained by duplicating within the derived class a pointer to each base
+class within the inheritance chain. The tradeoff is in the additional space required to 
+maintain the additional pointers.
+
+The original inheritance model supported by C++ forgoes all indirection; the data members
+of the base class subobject are directly stored within the derived class object.
+This offers the most compact and most efficient access of the base class members. The drawback,
+of course, is that any change to the base class members, such as adding, removing, or changing
+a member's type, requires that all code using objects of the base class or any class derived
+from it be recompiled.
+
+The introduction of virtual base classes into the language at the time of Release 2.0 required
+some form of indirect base class representation. The original model of virtual base class
+support added a pointer into the class object for each associated virtual base class.
+Alternative models have evolved that either introduce a virtual base class table or augment the
+existing virtual table to maintain the location of each virtual base class.
+
+ 
 
