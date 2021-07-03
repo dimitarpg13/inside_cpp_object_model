@@ -107,14 +107,14 @@ Adding Inheritance
 
 C++ supports both _single_ inheritance:
 
-```
+```cpp
 class Library_materials { ... };
 class Book : public Library_materials { ... };
 class Rental_book : public Book { ... };
 ```
 
 and _multiple_ inheritance:
-```
+```cpp
 // original pre-Standard iostream implementation
 class iostream:
    public istream,
@@ -123,7 +123,7 @@ class iostream:
 
 Moreover, the inheritance may be specified as _virtual_ (that is, shared):
 
-```
+```cpp
 class istream : virtual public ios { ... };
 class ostream : virtual public ios { ... };
 ```
@@ -171,5 +171,16 @@ support added a pointer into the class object for each associated virtual base c
 Alternative models have evolved that either introduce a virtual base class table or augment the
 existing virtual table to maintain the location of each virtual base class.
 
- 
+How the Object Model Effects Programs
 
+In practice, what does this mean for the programmer? Support for the object model results in
+both modifications of the existing program code and the insertion of additional code. 
+For example, given the following function, where class X defines a copy constructor, virtual
+destructor, and virtual function ```foo()```: 
+
+```cpp
+X foobar()
+{
+
+};
+```
