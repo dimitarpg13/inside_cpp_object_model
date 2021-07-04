@@ -519,4 +519,32 @@ composition of the memory being addressed.
 
 Adding Polymorphism
 
-Now, let's define a ```Bear``` as a kind of ```ZooAnimal```.
+Now, let's define a ```Bear``` as a kind of ```ZooAnimal```. This is done through public
+inheritance:
+
+```cpp
+class Bear : public ZooAnimal {
+public:
+   Bear();
+   ~Bear();
+   // ...
+   void rotate();
+   virtual void dance();
+   // ...
+protected:
+   enum Dances { ... };
+   Dances dances_known;
+   int cell_block;
+};
+
+Bear b( "Yogi" );
+Bear *pb = &b;
+Bear &rb = *pb;
+```
+
+What can we say about the memory requirements of ```b```, ```pb```, and ```rb```? Both the pointer
+and the reference require a single word of storage (4 bytes on a 32 bit processor). The ```Bear```
+object itself, however, requires 24 bytes. The size of a ZooAnimal is 16 bytes plus the 8 bytes 
+which ```Bear``` introduces. A likely memory layout is pictured in the figure below:
+
+<img src="images/object_lessons_pic5.png" width="324" height="408">
