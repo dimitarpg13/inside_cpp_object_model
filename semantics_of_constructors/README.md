@@ -104,5 +104,56 @@ sections look at the four conditions under which the default constructor is non-
 
 Member Class Object with Default Constructor
 
+If a class without any constructors contains a member object of a class with a default
+constructor, the implicit default constructor of the class is nontrivial and the 
+compiler needs to synthesize a default constructor for the containing class. This 
+synthesis, however, takes place only if the constructor actually needs to be invoked.
 
+An interesting question, then: Given the separate compilation model for C++, how does the
+compiler prevent synthesizing multiple default constructors, for example, one for file A.C
+and a second for file B.C? In practice, this is solved by having the synthesized default
+constructor, copy constructor, destructor and/or assignment copy operator defined as inline.
+An inline function has static linkage and is therefore not visible outside the file within
+which it is synthesized. If the function is too complex to be inlined by the implementation,
+an explicit non-inline static instance is synthesized. 
 
+For example, in the following code fragment, the compiler synthesizes a default constructor
+for a class ```Bar```:
+
+```cpp
+
+class Foo { public: Foo(), Foo( int ) ... };
+class Bar { public: Foo foo; char *str; };
+
+void foo_bar() {
+   Bar bar; // Bar::foo must be initialized here
+   if ( str ) { } ...
+}
+```
+
+The synthesized default constructor contains the code necessary to invoke the class ```Foo```
+default constructor on the member object ```Bar::foo```, but it does not generate any code to 
+initialize ```Bar::str```. Initialization of ```Bar::foo``` is the compiler's responsibility;
+initialization of ```Bar::str``` is the programmer's. The synthesized default constructor might
+look as follows:
+
+```cpp
+
+// possible synthesis of Bar default constructor
+// invoke Foo default constructor for member foo
+inline Bar::Bar()
+{
+   // pseudo C++ code
+   foo.Foo::Foo();
+}
+```
+
+Again, note that the synthesized default constructor meets only the needs of the implementation,
+not the needs of the program. For the program fragment to execute correctly, the character 
+pointer ```str``` also needs to be initialized. Let us assume the programmer provides for the
+initialization of ```str``` via the following default constructor:
+
+```cpp
+// programmer defined default constructor
+Bar::Bar() { str = 0; }
+```
