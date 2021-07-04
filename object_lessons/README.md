@@ -351,4 +351,10 @@ instance of the ADT paradigm. Whether the behavior of ```thing1``` is good
 or bad depends on what the programmer intended. In this example the behavior
 is very likely surprise.
 
- 
+In the OO paradigm, the programmer manipulates an unknown instance of a bounded
+but infinite set of types. (The set of types is bounded by its inheritance 
+hierarchy; in theory, however, there is no limit to the depth and breadth of 
+that hierarchy). The actual type of the object addressed is not resolved in
+principle until runtime at each particular point of execution. In C++, this 
+is achieved only through the manipulation of objects through pointers and 
+references.    
