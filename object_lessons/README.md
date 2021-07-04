@@ -484,3 +484,39 @@ ZooAnimal *pza = &za;
 a likely layout of the class object ```za``` and the pointer ```pza``` is pictured in the figure below.
 
 <img src="images/object_lessons_pic4.png" width="400" height="416"> 
+
+The Type of a Pointer
+
+How does a pointer to a ZooAnimal differ from a pointer to an integer or a pointer to a template
+Array instantiated with a String?
+
+```cpp
+ZooAnimal *px;
+int *pi;
+Array< String > *pta;
+```
+
+In terms of memory requirements, there is generally no difference: all three need to be allocated 
+sufficient memory to hold a machine address (usually a machine word). So the difference between
+pointers to different types rests neither in the representation of the pointer nor in the values
+(addresses) the pointers may hold. The difference lies in the type of object being addressed.
+That is, the type of a pointer instructs the compiler as to how to interpret the memory found at 
+a particular address and also just how much memory that interpretation should span:
+
+* an integer pointer addressing memory location 1000 on a 32-bit machine spans the address space
+1000-1003.
+
+* the ```ZooAnimal``` pointer, if we presume a conventional 8-byte String (a 4-byte character pointer
+and an integer to hold the string length), spans the address space 1000-1015.
+
+Reasonable question would be : what address space does a ```void*``` pointer that holds memory 
+location 1000 span? We do not know. That's why a pointer of type ```void*``` can only hold an 
+address and not actually operate on the object it addresses.
+
+So a cast in general is a kind of compiler directive. In most cases, it does not alter the 
+actual address a pointer contains. Rather, it alters only the interpretation of the size and 
+composition of the memory being addressed.
+
+Adding Polymorphism
+
+Now, let's define a ```Bear``` as a kind of ```ZooAnimal```.
