@@ -259,7 +259,7 @@ An Object Distinction
 
 The C++ programming model directly supports three programming paradigms:
 
-1. The procedural model as programmed in C, and, of course, supported within C++. An example of this
+1. The _procedural model_ as programmed in C, and, of course, supported within C++. An example of this
 is string manipulation using character arrays and the family of ```str*``` functions defined in the
 Standard C library:
 
@@ -274,7 +274,7 @@ if ( !strcmp( p_son, boy ))
    take_to_disneyland( boy );
 ```
 
-2. The abstract data type (ADT) model in which users of the abstraction are provided with a set of
+2. The _abstract data type (ADT) model_ in which users of the abstraction are provided with a set of
 operations (the public interface), while the implementation remains hidden. An example of this is a
 String class:
 
@@ -289,3 +289,66 @@ daughter = girl;
 if ( girl == daughter )
     take_to_disneyland( girl );
 ```
+
+3. The _object-oriented (OO) model_ in which a collection of related types are encapsulated through an
+abstract base class providing a common interface. An example of this is a Library_materials class from
+which actual subtypes such as ```Book```, ```Video```, ```Compact_Disc```, ```Puppet``` and ```Laptop```
+ are derived:
+
+```cpp
+void check_in( Library_materials *pmat )
+{
+    if ( pmat->late() )
+       pmat->fine();
+    pmat->check_in();
+    if ( Lender *plend = pmat->reserved() )
+       pmat->notify( plend ); 
+
+}
+```
+
+Programs written purely in the idiom of any one of these paradigms tend to be well behaved. Mixed
+paradigm, however, hold a greater potential for surprise, particularly when the mixing is inadvertent.
+The most common inadvertent mixing of idioms occurs when a concrete instance of a base class such as 
+
+```cpp
+Library_materials thing1;
+```
+
+is used to program some aspect of polymorphism:
+
+```cpp
+// class Book : public Library_materials { ... };
+Book book;
+
+// Ooops: thing1 is not a book!
+// Rather, book is _sliced_ -
+// thing1 remains a Library_materials
+thing1 = book;
+
+// Oops: invokes
+// Library_materials::check_in()
+thing1.check_in();
+```
+
+rather than a pointer or reference of the base class:
+
+```cpp
+// OK: thing2 now reference book
+Library_materials &thing2 = book;
+
+// OK: invokes Book::check_in()
+thing2.check_in();
+```
+
+Although you can manipulate a base class object of an inheritance hierarchy
+ either directly or indirectly, only the indirect manipulation of the object
+through a pointer or reference supports the polymorphism necessary for OO
+programming. The definition and use of ```thing2``` in the previous example
+is a well-behaved instance of the OO paradigm. The definition and use of 
+```thing1``` falls outside of the OO idiom; it reflects a well-behaved 
+instance of the ADT paradigm. Whether the behavior of ```thing1``` is good 
+or bad depends on what the programmer intended. In this example the behavior
+is very likely surprise.
+
+ 
