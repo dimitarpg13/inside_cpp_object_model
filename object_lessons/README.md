@@ -357,4 +357,93 @@ hierarchy; in theory, however, there is no limit to the depth and breadth of
 that hierarchy). The actual type of the object addressed is not resolved in
 principle until runtime at each particular point of execution. In C++, this 
 is achieved only through the manipulation of objects through pointers and 
-references.    
+references. In contrast, in the ADT paradigm the programmer manipulates an
+instance of a fixed, singular type that is completely defined at the point 
+of compilation. For example, given the following set of declarations:
+
+```cpp
+// represent objects: uncertain type
+Library_materials *px = retrieve_some_material();
+Library_materials &rx = *px;
+
+// represents datum: no surprise
+Library_materials dx = *px;
+```
+
+it can never be said with certainty what the actual type of the object is 
+that ```px``` or ```rx``` addresses. It can only be said that it is either
+a ```Library_materials``` object or a subtype rooted by ```Library_materials```
+ class. ```dx```, however, is and can only be an object of the 
+```Library_materials``` class. Later in this section, I discuss why this 
+behavior, although perhaps unexpected, is well behaved.
+
+Although the polymorphic manipulation of an object requires that the object be
+accessed either through a pointer or a reference, the manipulation of a pointer
+or reference in C++ does not necessarily result in polymorphism! For example, 
+consider
+
+In C++, polymorphism exists only within individual public class hierarchies. 
+```px```, for example, may address either an object of its own type or a type
+publicly derived from it (not considering ill-behaved casts).
+Nonpublic derivation and pointers of type ```void*``` can be spoken of as 
+polymorphic, but they are without explicit language support; that is they must
+be managed by the programmer through explicit casts. (One might say that they are
+not first-class polymorphic objects).
+
+The C__ language supports polymorphism in the following ways:
+
+1. Through a set of implicit conversions, such as the conversion of a derived 
+class pointer to a pointer of its public base type:
+```cpp
+shape *ps = new circle();
+```
+
+2. Through the virtual function mechanism:
+```cpp
+ps->rotate();
+```
+3. Through the ```dynamic_cast``` and ```typeid``` operators:
+```cpp
+if ( circle * pc = dynamic_cast< circle* >( ps )) ...
+```
+
+The primary use of polymorphism is to effect type encapsulation through a shared 
+interface usually defined within an abstract base class from which specific subtypes
+are derived. The ```Library_materials``` class, for example, defines an interface for 
+a ```Book```, ```Video```, and ```Puppet``` subtype. This shared interface is invoked
+through the virtual function mechanism that resolves which instance of a function to
+invoke based on the actual type of the object at each point during execution. By our
+writing code such as:
+```cpp
+library_material->check_out();
+``` 
+user code is shielded from the variety and volatility of lending materials supported
+by a particular library. This not only allows for the addition, revision or removal
+of types without reuiring changes to user programs. It also frees the provider of a
+new ```Library_materials``` subtype from having to recode behavior or actions common
+to all types in the hierarchy itself.
+
+Consider the following code fragment:
+```
+void rotate(
+   X datum,
+   const X *pointer,
+   const X &reference )
+{
+   // cannot determine until run-time
+   // actual instance of rotate() invoked
+   (*pointer).rotate();
+   reference.rotate();
+   // always invokes X::rotate()
+   datum.rotate();
+}
+
+main() {
+   Z z; // a subtype of X
+
+   rotate( z, &z, z );
+   return 0;
+}
+```
+
+
