@@ -630,4 +630,4 @@ definitions:
 ```
 one possible memory layout is pictured in the figure below:
 
-<img src="images/object_lessons_pic6.png" width="408" height="636"> 
+<img src="images/object_lessons_pic6.png" width="350" height="546"> 
