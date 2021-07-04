@@ -241,4 +241,51 @@ to determine that the following is an invocation of ```pf``` rather than its def
 int ( *pf ) ( 1024 );
 ```
 
+On the following declaration, lookahead does not even work:
 
+```cpp
+// meta-language rule:
+// declaration of pq, not invocation
+int ( *pq )( );
+```
+
+A meta-language rule is required, dictating that when the language cannot distinguish between 
+a declaration and an expression, it is to be interpreted as a declaration.
+
+Similarly, the concept of a class could be supported by a single ```class``` keyword, if C++ were not
+required to support existing C code and, with that, the keyword ```struct```. 
+
+An Object Distinction
+
+The C++ programming model directly supports three programming paradigms:
+
+1. The procedural model as programmed in C, and, of course, supported within C++. An example of this
+is string manipulation using character arrays and the family of ```str*``` functions defined in the
+Standard C library:
+
+```cpp
+char boy[] = "Danny";
+char *p_son;
+...
+p_son = new charp strlen( boy ) + 1 ];
+strcpy( p_son, boy );
+...
+if ( !strcmp( p_son, boy ))
+   take_to_disneyland( boy );
+```
+
+2. The abstract data type (ADT) model in which users of the abstraction are provided with a set of
+operations (the public interface), while the implementation remains hidden. An example of this is a
+String class:
+
+```cpp
+String girl = "Anna";
+String daughter;
+...
+// String::operator=();
+daughter = girl;
+...
+// String::operator==();
+if ( girl == daughter )
+    take_to_disneyland( girl );
+```
