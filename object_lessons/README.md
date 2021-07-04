@@ -547,4 +547,4 @@ and the reference require a single word of storage (4 bytes on a 32 bit processo
 object itself, however, requires 24 bytes. The size of a ZooAnimal is 16 bytes plus the 8 bytes 
 which ```Bear``` introduces. A likely memory layout is pictured in the figure below:
 
-<img src="images/object_lessons_pic5.png" width="324" height="408">
+<img src="images/object_lessons_pic5.png" width="408" height="513">
