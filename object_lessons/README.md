@@ -631,3 +631,35 @@ definitions:
 one possible memory layout is pictured in the figure below:
 
 <img src="images/object_lessons_pic6.png" width="408" height="491"> 
+
+Assigning ```pz``` the address of either ```za```, ```b```, or that contained by ```pp``` is 
+obviously not a problem. A pointer and a reference support polymorphism because they do not
+involve any type-dependent commitment of resources. Rather, all that is altered is the 
+interpretation of the size and composition of the memory they address.
+
+Any attempt to alter the actual size of the object ```za```, however, violates the contracted
+resource requirements of its definition. Assign the entire ```Bear``` object to ```za``` and
+the object overflows its allocated memory. As a result, the executable is, literaly, corrputed,
+although the corruption may not manifest itself as a core dump.
+
+When a base class object is directly initialized or assigned with a derived class object, the
+derived object is _sliced_ to fit into the available memory resources of the base type. There is
+nothing of the derived type remaining. Polymorphism is not present, and an observant compiler can
+resolve an invocation of a virtual function through the object at compile time, thus bypassing
+the virtual mechanism. This can be a significant performance win if the virtual function is defined
+as inline.
+
+To summarize, polymorphism is a powerful design mechanism that allows for encapsulation of related
+types behind an abstract public interface, such as our ```Library_materials``` hierarchy. The cost
+is additional level of indirection, both in terms of memory acquisition and type resolution.
+C++ supports polymorphism through class pointers and references. This represents
+the _object-oriented_ style of programming.
+
+C++ also supports a concrete ADT style of programming now called object-based (OB)-nonpolymorphic
+data types such as a String class. A String class exhibits a nonpolymorphic form of encapsulation;
+it provides a public interface and private implementation (both of state and algorithm) but does
+not support type extension. An OB design can be faster and more compact than an equivalent OO
+design. Faster because all function invocations are resolved at compile time and object 
+construction need not set up the virtual mechanism, and more compact because each class object
+need not carry the additional overhead traditionally associated with the support of the virtual
+mechanism. However, an OB design also is less flexible. 
