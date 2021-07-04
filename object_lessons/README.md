@@ -548,3 +548,86 @@ object itself, however, requires 24 bytes. The size of a ZooAnimal is 16 bytes p
 which ```Bear``` introduces. A likely memory layout is pictured in the figure below:
 
 <img src="images/object_lessons_pic5.png" width="408" height="513">
+
+Given that our ```Bear``` object is situated at memory location 1000, what are the real differences 
+between a ```Bear``` and ```ZooAnimal``` pointer?
+
+```cpp
+Bear b;
+ZooAnimal *pz = &b;
+Bear *pb = &b;
+```
+
+Each addresses the same first byte of the ```Bear``` object. The difference is that the address span
+of ```pb``` encompasses the entire ```Bear``` object, while the span of ```pz``` encompasses only the
+```ZooAnimal``` subobject of ```Bear```.
+
+```pz``` cannot directly access any members other than those present within the ```ZooAnimal```
+subobject, except through the virtual mechanism:
+
+```cpp
+// illegal: cell_block not a member
+// of ZooAnimal, although we _know_
+// pz currently addresses a Bear object
+pz->cell_block;
+// okay: an explicit downcast
+(( Bear* )pz)->cell_block;
+
+// better: but a run-time operation
+if ( Bear& pb2 = dynamic_cast< Bear* >( pz ))
+   pb2->cell_block;
+
+// ok: cell_block a member of Bear
+pb->cell_block;
+```
+
+when we write
+
+```cpp
+pz->rotate();
+```
+the type of ```pz``` determines the following at compile time:
+* the fixed, available interface (that is, ```pz``` may invoke only the ```ZooAnimal``` public interface)
+* the access level of that interface (for example, ```rotate()``` is a public member of ```ZooAnimal```)
+
+The type of the object that ```pz``` addresses at each point of execution determines the instance of
+```rotate()``` invoked. The encapsulation of the type information is maintained not in ```pz``` but 
+in the _link_ between the object's _vptr_ and the virtual table the _vptr_ addresses.
+
+So, then, why is it that, given
+
+```cpp
+Bear b;
+ZooAnimal za = b;
+
+// ZooAnimal::rotate() invoked
+za.rotate();
+```
+
+the instance of ```rotate()``` invoked is the ```ZooAnimal``` instance and not that of ```Bear```? 
+Moreover, if memberwise initialization copies the values of one object to another, why is ```za```'s
+_vptr_ not addressing ```Bear```'s virtual table?
+
+The answer to the second question is that the compiler intercedes in the initialization and 
+assignment of one class with another. The compiler must ensure that if an object contains one or more
+_vptr_'s, those _vptr_ values are not initialized or changed by the source object.
+
+The answer to the first question is that ```za``` is not (and can never be) a ```Bear```; it is 
+(and can never be anything but) ```ZooAnimal```. Polymorphism, the potential to be of more than 
+one type, is not physically possible in directly accessed objects. Paradoxically, direct object
+manipulation is not supported under OO programming. For example, given the following set of 
+definitions:
+```cpp
+{
+   ZooAnimal za;
+   ZooAnimal *pza;
+
+   Bear b;
+   Panda *pp = new Panda;
+   
+   pza = &b;
+}
+```
+one possible memory layout is pictured in the figure below:
+
+<img src="images/object_lessons_pic6.png" width="408" height="636"> 
