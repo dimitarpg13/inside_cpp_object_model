@@ -446,4 +446,41 @@ main() {
 }
 ```
 
+The two invocations through ```pointer``` and ```reference``` are resolved dynamically. In 
+this example, they both invoke ```Z::rotate()```. The invocation through ```datum``` may or 
+may not be invoked through the virtual mechanism; however, it will always invoke 
+```X::rotate()```. This is what is called a "quality of compilation" issue: whether the 
+invocation of a virtual function through ```datum``` circumvents or employs the virtual
+mechanism.
 
+The memory requirements to represent a class object in general are the following:
+
+* The accumulated size of its nonstatic members
+* Plus any padding between members or on aggregate boundary itself due to alignment constraints
+or simply for efficiency reasons
+* Plus any internally generated overhead to support the virtuals
+
+The memory requirement to represent a pointer, however, is a fixed size regardless of the type
+it addresses. For example, given the following declaration of a ```ZooAnimal``` class:
+
+```cpp
+class ZooAnimal {
+public:
+    ZooAnimal();
+    virtual ~ZooAnimal();
+
+    // ...
+
+    virtual void rotate();
+protected:
+    int loc;
+    String name;
+};
+
+ZooAnimal za( "Zoey" );
+ZooAnimal *pza = &za;
+```
+
+a likely layout of the class object ```za``` and the pointer ```pza``` is pictured in the figure below.
+
+<img src="images/object_lessons_pic4.png" width="400" height="416"> 
