@@ -239,4 +239,116 @@ Snow_White::Snow_White()
 The interaction of invoking implicit default constructors with that of invoking 
 constructors explicitly listed within the member initialization list is discussed later.
 
+Base Class With Default Constructor
+
+Similarly, if a class without any constructors is derived from a base class containing
+a default constructor, the default constructor for the derived class is considered 
+non-trivial and so needs to be synthesized. The synthesized default constructor of the
+derived class invokes the default constructor of each of its immediate base classes in
+the order of their declaration. To a subsequently derived class, the synthesized 
+constructor appears no different than that of an explicitly provided default constructor.
+
+What if the designer provides multiple constructors but no default constructor? The
+compiler augments each constructor with the code necessary to invoke all required default
+constructors. However, it does not synthesize a default constructor because of the 
+presence of the other user-supplied constructors. If member class objects with default
+constructors are also present, these default constructors are also invoked-after the 
+invocation of all base class constructors.
+
+Class with a Virtual Function
+
+There are two additional cases in which a synthesized default constructor is needed:
+
+1. The class either declares (or inherits) a virtual function
+2. The class is derived from an inheritance chain in which one or more base classes
+are virtual
+
+In both cases, in the absence of any declared constructors, implementation bookkeeping
+necessitates the synthesis of a default constructor. For example, given the following
+code fragment:
+
+```cpp
+class Widget {
+public:
+   virtual void flip() = 0;
+   // ...
+};
+
+void flip( const Widget& widget ) { widget.flip(); }
+
+// presuming Bell and Whistle are drived from Widget
+void foo() {
+   Bell b; Whistle w;
+   flip( b );
+   flip( w );
+}
+```
+
+the following two class "augmentations" occur during compilation:
+
+1. A virtual function table (referred to as the class vtbl) 
+is generated and populated with the addresses of the active virtual functions for that class.
+
+2. Within each class object, an additional pointer member (the _vptr_) is synthesized to hold the 
+address of the associated class _vtbl_. 
+
+In addition, the virtual invocation of ```widget.flip()``` is rewritten to make use of ```widget```'s
+_vptr_ and ```flip()```'s entry into the associated _vtbl_:
+
+```cpp
+// simplified transformation of virtual invocation:
+widget.flip()
+   ( * widget.vptr[ 1 ] ) ( &widget )
+```
+where
+    * ```l``` represents ```flip()```'s fixed index into the virtual table, and
+    * ```&widget``` represents the ```this``` pointer to be passed to the particular
+invocation of ```flip()```.
+
+For this mechanism to work, the computer must initialize the _vptr_ of each ```Widget``` object 
+(or the object of a class derived from ```Widget```) with the address of the appropriate 
+virtual table. For each constructor the class defines, the compiler inserts code that does just
+that. In classes that do not declare any constructors, the compiler synthesizes a default
+constructor in order to correctly initialize the _vptr_ of each class object. 
+
+Class with a Virtual Base Class
+
+Virtual base class implementations vary widely across compilers. However, what is common to each
+implementation is the need to make the virtual base class location within each derived class
+object available at runtime. For example, in the following program fragment:
+
+```cpp
+class X { public: int i; };
+class A : public virtual X { public: int j; };
+class B : public virtual X { public: double d; };
+class C : public A, public B { public: int k; };
+// cannot resolve location of pa->X::i at compile-time
+void foo ( const A* pa ) { pa->i = 1024; }
+
+main() {
+   foo( new A );
+   foo( new C );
+   // ...
+}
+```
+
+the compiler cannot fix the physical offset of ```X::i``` accessed through ```pa``` within ```foo()```,
+since the actual type of ```pa``` can vary with each of ```foo()```'s invocations. Rather, the 
+compiler must transform the code doing the access so that the resolution of ```X::i``` can be 
+delayed until runtime. In the original _cfront_ implementation, for example, this is accomplished by
+inserting a pointer to each of the virtual base classes within the derived class object. 
+All reference and pointer access of a virtual base class is chieved through the associated pointer.
+In our example, ```foo()``` might be rewritten as follows under this implementation strategy:
+
+```cpp
+// possible compiler transformation
+void foo( const A* pa ) { pa->__vbcX->i = 1024; } 
+```
+where ```__vbcX``` represents the compiler-generated pointer to the virtual base class ```X```.
+
+The initialization of ```__vbcX``` (or whatever implementation mechanism is used) is accomplished
+during the construction of the class object. For each constructor the class defines, the 
+compiler inserts code that permits runtime access of each virtual base class. In classes that do
+not declare any constructors, the compiler needs to synthesize a default constructor.
+
 
