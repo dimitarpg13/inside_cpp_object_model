@@ -157,3 +157,86 @@ initialization of ```str``` via the following default constructor:
 // programmer defined default constructor
 Bar::Bar() { str = 0; }
 ```
+
+Now the program need is fulfilled, but the implementation need to initialize the member object 
+```foo``` still remains. Because the default constructor is explicitly defined, the compiler 
+cannot synthesize a second instance to do its work.
+
+Consider the case of each constructor defined for a class containing one or more member class
+objects for which a default constructor must be invoked. In this case, the compiler augments
+the existing constructors, inserting code that invokes the necessary default constructors 
+prior to the execution of the user code. In the previous example, the resulting augmented 
+constructor might look as follows:
+
+```cpp
+// Augmented default constructor
+// Pseudo C++ code
+Bar::Bar()
+{
+   foo.Foo::Foo(); // augmented compiler code
+   str = 0;        // explicit user code
+}
+```
+
+What happens if there are multipe class member objects requiring constructor initialization?
+The language requires that the constructors be invoked in the order of member declaration 
+within the class. This is accomplished by the compiler. It inserts code within each constructor
+invoking the associated default constructors for each member in the order of the member 
+declaration. This code is inserted just prior to the explicitly supplied user code. For 
+example, say we have the following three classes:
+
+```cpp
+class Dopey { public: Dopey(); ... };
+class Sneezy { public: Sneezy ( int ); Sneezy(); ... };
+class Bashful { public: Bashful () ... };
+
+``` 
+
+and a containing class ```Snow_White```:
+
+```cpp
+class Snow_White {
+public:
+   Dopey dopey;
+   Sneezy sneezy;
+   Bashful bashful;
+   // ...
+private:
+   int mumble;
+};
+
+```
+
+If ```Snow_White``` does not define a default constructor, a nontrivial default constructor
+is synthesized that invokes the three default constructors of Dopey, Sneezy and Bashful in
+that order. If, on other hand, ```Snow_White``` defines the following default constructor:
+
+```cpp
+// programmer coded default constructor
+Snow_White::Snow_White () : sneezy( 1024 )
+{
+   mumble = 2048;
+}
+```
+it is augmented as follows:
+
+```cpp
+// Compiler augmented default constructor
+// Pseudo C++ Code
+Snow_White::Snow_White()
+{
+   // insertion of member class object
+   // constructor invocations
+   dopey.Dopey::Dopey();
+   sneezy.Sneezy::Sneezy( 1024 );
+   bashful.Bashful::Bashful();
+
+   // explicit user code
+   mumble = 2048;
+}
+```
+
+The interaction of invoking implicit default constructors with that of invoking 
+constructors explicitly listed within the member initialization list is discussed later.
+
+
