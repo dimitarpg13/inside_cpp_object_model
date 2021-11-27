@@ -32,7 +32,7 @@ inline std::ostream& operator<<( std::ostream &os, const Point<T, dim>& pt )
 {
     os << "( ";
     for ( int ix = 0; ix < dim-1; ix++ )
-        os << pt[ ix ] << ", "
+        os << pt[ ix ] << ", ";
     os << pt[ dim-1 ];
     os << " )";
 };
